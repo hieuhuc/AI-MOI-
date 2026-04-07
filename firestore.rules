@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email == "hieuhuctran241020@gmail.com" && request.auth.token.email_verified == true);
+    }
+
+    // Quiz Rules
+    match /quizzes/{quizId} {
+      // Anyone can read a quiz if they have the ID (for students)
+      allow read: if true;
+      
+      // Only authenticated teachers can create/update/delete quizzes
+      allow create: if isAuthenticated() && 
+        request.resource.data.teacherId == request.auth.uid;
+      
+      allow update, delete: if isAuthenticated() && 
+        resource.data.teacherId == request.auth.uid;
+    }
+
+    // Result Rules
+    match /results/{resultId} {
+      // Students can create results and check if they already submitted
+      allow create: if true;
+      allow read: if true; // Allow students to read their own results after submission
+        
+      // Only the teacher who owns the quiz can read the results
+      allow list: if isAuthenticated();
+    }
+  }
+}

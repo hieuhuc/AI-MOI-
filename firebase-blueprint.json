@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "Quiz": {
+      "title": "Quiz",
+      "description": "Thông tin bài kiểm tra",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Tiêu đề bài kiểm tra" },
+        "duration": { "type": "number", "description": "Thời gian làm bài (phút)" },
+        "questions": { "type": "array", "description": "Danh sách câu hỏi" },
+        "status": { "type": "string", "enum": ["open", "closed"], "description": "Trạng thái" },
+        "teacherId": { "type": "string", "description": "ID giáo viên tạo" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "duration", "questions", "status", "teacherId"]
+    },
+    "Result": {
+      "title": "Result",
+      "description": "Kết quả làm bài của sinh viên",
+      "type": "object",
+      "properties": {
+        "quizId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentCode": { "type": "string" },
+        "score": { "type": "number" },
+        "answers": { "type": "array" },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["quizId", "studentName", "studentCode", "score", "submittedAt"]
+    }
+  },
+  "firestore": {
+    "/quizzes/{quizId}": {
+      "schema": "Quiz",
+      "description": "Bộ sưu tập các bài kiểm tra"
+    },
+    "/results/{resultId}": {
+      "schema": "Result",
+      "description": "Bộ sưu tập kết quả làm bài"
+    }
+  }
+}
